@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="taskapp">
+
+<head>
+    <title>Lists Of Tasks</title>
+    <link href="./bootstrap-dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Lists Of Tasks
+                    </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content" ng-controller="TasksController">
+
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline well well-sm">
+                    <span class="glyphicon glyphicon-search"></span>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="search" placeholder="Search..." />
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" ng-hide="addEditForm">
+            <div class="col-md-12">
+                <form class="form-inline well well-sm">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="toggleAddEditForm()"><span class="glyphicon glyphicon-plus"></span> Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" ng-show="addEditForm">
+            <div class="col-md-12">
+                <form name="myForm" class="well well-sm">
+
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="new.title" placeholder="Title..." />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="new.description" placeholder="Description..." />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="new.startDate" placeholder="yyyy/MM/dd hh:mm" />
+                    </div>
+
+                    <div class="form-group">
+                        <input type="number" class="form-control" ng-model="new.estimatedTime" placeholder="Estimated time..." />
+                    </div>
+
+                    <div class="form-group checkbox">
+                        <label>
+                            <input type="checkbox" ng-model="new.completed" value="">Completed?
+                        </label>
+                    </div>
+                    <div class="form-group form-inline">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="saveTask(myForm.$valid)">Save</button>
+                        <button type="button" class="btn btn-secondary btn-md" ng-click="toggleAddEditForm()">Cancel</button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Datetime</th>
+                        <th>Completed?</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="task in tasks | filter:sensitiveSearch" ng-click="selectTask(task, $index)" ng-style="{
+                          'background-color': $index == selectedIdx ? 'lightgray' : ''
+                        }">
+                        <td>{{ $index }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.startDate | date:"longDate" }}</td>
+                        <td>{{ task.completed ? "Sim" : "Não" }}</td>
+                        <td><span class="glyphicon glyphicon-edit" ng-click="editTask(task)"></span></td>
+                        <td><span class="glyphicon glyphicon-trash" alert-msg></span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Details</div>
+                    <div class="panel-body">
+                        <dl>
+                            <dt>Title</dt>
+                            <dd>{{selectedTask.title}}</dd>
+                            <dt>Description</dt>
+                            <dd>{{selectedTask.description}}</dd>
+                            <dt>Datetime</dt>
+                            <dd>{{selectedTask.startDate | date:"longDate"}}</dd>
+                            <dt>Estimated Time</dt>
+                            <dd>{{selectedTask.estimatedTime}}</dd>
+                            <dt>Completed</dt>
+                            <dd ng-show="selectedTask">{{selectedTask.completed ? "Sim" : "Não"}}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="angular.min.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>
