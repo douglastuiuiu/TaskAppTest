@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="taskapp">
+
+<head>
+    <title>Lists Of Tasks</title>
+
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="main.css" rel="stylesheet">
+
+    <meta charset="UTF-8">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">Lists Of Tasks
+                    </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content" ng-controller="TasksController">
+
+        <div class="row">
+            <div class="col-md-12">
+                <form class="form-inline well well-sm">
+                    <span class="glyphicon glyphicon-search"></span>
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="search" placeholder="Search..." />
+                        <input type="checkbox" ng-model="sensitiveSearch">Sensitive search
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" ng-hide="addEditForm">
+            <div class="col-md-12">
+                <form class="form-inline well well-sm">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="toggleAddEditForm()"><span class="glyphicon glyphicon-plus"></span> Add</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row" ng-show="addEditForm">
+            <div class="col-md-12">
+                <form name="myForm" class="well well-sm">
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="new.title" placeholder="Title...">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="new.description" placeholder="Description...">
+                    </div>
+
+                    <div class="form-group form-inline">
+                        <!--<input type="text" class="form-control" ng-model="new.startDate" placeholder="yyyy/MM/dd hh:mm">-->
+                        <input type="datetime-local" class="form-control" ng-value="new.startDate" id="formStartDate">
+
+                        <input type="number" class="form-control" ng-model="new.estimatedTime" placeholder="Estimated time...">
+
+                        <select ng-model="new.status" class="form-control">
+                            <option selected disabled="disabled">-- select a status --</option>
+                            <option ng-repeat="option in domain.statusList" value="{{option}}">{{option}}</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group form-inline">
+                        <button type="button" class="btn btn-primary btn-md" ng-click="saveTask(myForm.$valid)">Save</button>
+                        <button type="button" class="btn btn-secondary btn-md" ng-click="clearSelection()">Cancel</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr ng-if="!!tasks && tasks.length > 0">
+                        <th class="text-center">#</th>
+                        <th>Title</th>
+                        <th>Datetime</th>
+                        <th>Status</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="task in tasks | filter:searching" ng-click="selectTask(task, $index)" ng-style="{
+                          'background-color': $index == selectedIdx ? 'lightgray' : ''
+                        }">
+                        <td class="text-center">{{ $index }}</td>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.startDate | date:"longDate"}}</td>
+                        <td>{{ task.status }}</td>
+                        <td class="text-center"><span class="glyphicon glyphicon-edit cursor" ng-click="editTask(task)"></span></td>
+                        <td class="text-center"><span class="glyphicon glyphicon-trash cursor" alert-msg></span></td>
+                    </tr>
+                    <tr ng-if="!(!!tasks) || tasks.length === 0">
+                        <td class="text-center">
+                            <h4 class="text-center">No data</h4>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Details</div>
+                    <div class="panel-body" ng-if="!(!!selectedTask)">
+                        <h4 class="text-center">Select a row to show more</h4>
+                    </div>
+                    <div class="panel-body" ng-if="!!selectedTask">
+                        <dl>
+                            <dt>Title</dt>
+                            <dd>{{selectedTask.title}}</dd>
+                            <dt>Description</dt>
+                            <dd>{{selectedTask.description}}</dd>
+                            <dt>Start Date</dt>
+                            <dd>{{selectedTask.startDate | date:"longDate"}}</dd>
+                            <dt>Estimated Time</dt>
+                            <dd>{{selectedTask.estimatedTime}}</dd>
+                            <dt>Status</dt>
+                            <dd>{{selectedTask.status}}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="assets/angular/js/angular.min.js"></script>
+    <script src="assets/jquery/js/jquery-3.3.1.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="main.js"></script>
+
+</body>
+
+</html>
