@@ -1,19 +1,19 @@
-var app = angular.module('taskapp', []);
+angular.module('taskapp')
 
-app.directive('alertMsg', [function() {
+.directive('alertMsg', [function() {
     return {
         restrict: 'A',
         link: function(scope, element, attrs) {
             element.bind('click', function() {
                 if (confirm("Tem certeza?")) {
-                    scope.$apply(scope.deleteTask);
+                    scope.$apply(scope.delete);
                 }
             });
         }
     }
-}]);
+}])
 
-app.controller('TasksController', function($scope) {
+.controller('TaskController', function($scope, TaskService) {
 
     $scope.search = "";
     $scope.sensitiveSearch = false;
@@ -28,31 +28,7 @@ app.controller('TasksController', function($scope) {
 
     // for test/example
     $scope.init = function() {
-        $scope.tasks = [{
-            "title": "Gamification",
-            "description": "Desenvolver plataforma de gamification para o site da Labelamafia",
-            "startDate": "2016-06-14T09:00:00",
-            "estimatedTime": 60,
-            "status": 'OPENED'
-        }, {
-            "title": "ERP Interno",
-            "description": "Desenvolver ERP para uso interno onde possa-se gerenciar as tasks de cada usuario",
-            "startDate": "2016-03-22T09:00:00",
-            "estimatedTime": 90,
-            "status": 'OPENED'
-        }, {
-            "title": "Migrar APIs",
-            "description": "Migrar APIs escritas em nodejs para ruby on rails",
-            "startDate": "2016-02-10T16:30:00",
-            "estimatedTime": 180,
-            "status": 'IN_PROGRESS'
-        }, {
-            "title": "Desenvolver DCIM",
-            "description": "Desenvolver DCIM - Gerenciamento de datacenters e ambientes críticos",
-            "startDate": "2016-07-01T15:00:00",
-            "estimatedTime": 240,
-            "status": 'FINISHED'
-        }];
+        $scope.list();
     }
 
     //aux functions
@@ -91,21 +67,24 @@ app.controller('TasksController', function($scope) {
         return true;
     };
 
-    //persistence functions
-    $scope.deleteTask = function deleteTask() {
-        $scope.tasks.splice($scope.selectedIdx, 1);
-        $scope.clearSelection();
-    };
-
     $scope.editTask = function editTask(task) {
         $scope.new = angular.copy(task);
-        //$scope.selectedTask = $scope.new;
 
         $scope.editMode = true;
         $scope.addEditForm = true;
     };
 
-    $scope.saveTask = function saveTask(valid) {
+    //persistence functions
+    $scope.list = function(){
+      $scope.tasks = TaskService.list();  
+    };
+    
+    $scope.delete = function() {
+        $scope.tasks.splice($scope.selectedIdx, 1);
+        $scope.clearSelection();
+    };
+
+    $scope.save = function(valid) {
         if (!valid) return;
 
         //get value from datetime-local input
